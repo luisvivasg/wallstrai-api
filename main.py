@@ -54,11 +54,6 @@ def get_forecast(req: ForecastRequest):
 
         logger.info(f"Downloaded data shape: {data.shape}")
 
-        # Robust column handling
-        if isinstance(data.columns, pd.MultiIndex):
-            logger.info("Detected MultiIndex - flattening columns")
-            data.columns = data.columns.get_level_values(0)
-
         # Select needed columns and standardize names
         data = data[['Close', 'Low', 'High']].copy()
         data.columns = ['close', 'low', 'high']
