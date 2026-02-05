@@ -45,8 +45,13 @@ def get_forecast(req: ForecastRequest):
         if data.empty:
             raise ValueError("No data returned from yfinance")
 
-        data = data[['Close', 'Low', 'High']]  # keep what you need
-        data.columns = [col.lower() for col in data.columns]
+        # Robust column handling
+        if isinstance(data.columns, pd.MultiIndex):
+            data.columns = data.columns.get_level_values(0)
+
+        # Keep only needed columns and standardize names
+        data = data[['Close', 'Low', 'High']].copy()
+        data.columns = ['close', 'low', 'high']
 
         # Preprocessing
         close_prices = data['close'].values.reshape(-1, 1)
